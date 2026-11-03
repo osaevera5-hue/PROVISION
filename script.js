@@ -1,549 +1,360 @@
 
 /* =========================================
-   PROVISION HUB - SHOPPING SYSTEM
-   HTML + CSS + JAVASCRIPT PROTOTYPE
+   ESSMASS ENTERPRISE
+   Shopping and Ordering System
 ========================================= */
 
-// IMPORTANT:
-// Replace this placeholder with your business WhatsApp number.
-// Ghana example: 233241234567
-// Do not include +, spaces or dashes.
-const WHATSAPP_NUMBER = "233242364313";
+/*
+  IMPORTANT:
+  Replace this sample number with your brother's
+  WhatsApp number, including Ghana's country code.
+  Example format: 233241234567
+  Do not include +, spaces or hyphens.
+*/
+const SHOP_WHATSAPP = "233XXXXXXXXX";
 
-const money = amount =>
-    new Intl.NumberFormat("en-GH", {
-        style: "currency",
-        currency: "GHS",
-        minimumFractionDigits: 2
-    }).format(amount);
-
-// Sample products: change prices and images to match your stock.
-// wholesaleMin is the minimum quantity that qualifies for wholesale.
-// Prices are illustrative, not live supplier prices.
-
+/*
+  These are DEMONSTRATION products and prices.
+  Replace them with the actual products and prices
+  confirmed by ESSMASS ENTERPRISE.
+*/
 const products = [
     {
         id: 1,
-        name: "Premium Rice",
-        category: "Rice & Grains",
-        unit: "1 kg bag",
-        price: 22,
-        wholesalePrice: 19,
-        wholesaleMin: 10,
-        image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80"
+        name: "6-Inch Concrete Block",
+        category: "blocks",
+        description: "Concrete block for wall construction.",
+        price: 8.00,
+        unit: "per block",
+        tag: "Popular",
+        image: "https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 2,
-        name: "Cooking Oil",
-        category: "Cooking Essentials",
-        unit: "1 litre bottle",
-        price: 28,
-        wholesalePrice: 25,
-        wholesaleMin: 12,
-        image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80"
+        name: "5-Inch Concrete Block",
+        category: "blocks",
+        description: "Block for suitable building applications.",
+        price: 7.00,
+        unit: "per block",
+        tag: "Blocks",
+        image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 3,
-        name: "Powdered Milk",
-        category: "Drinks & Dairy",
-        unit: "400 g tin",
-        price: 48,
-        wholesalePrice: 44,
-        wholesaleMin: 6,
-        image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80"
+        name: "Standard Cement Bag",
+        category: "cement",
+        description: "Cement for masonry and construction.",
+        price: 100.00,
+        unit: "per bag",
+        tag: "Cement",
+        image: "https://images.unsplash.com/photo-1513467655676-561b7d489a88?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 4,
-        name: "Tomato Paste",
-        category: "Canned Foods",
-        unit: "1 tin",
-        price: 8,
-        wholesalePrice: 6.8,
-        wholesaleMin: 24,
-        image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=80"
+        name: "PVC Water Pipe",
+        category: "plumbing",
+        description: "PVC pipe. Confirm diameter and length.",
+        price: 45.00,
+        unit: "per piece",
+        tag: "Plumbing",
+        image: "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 5,
-        name: "Spaghetti",
-        category: "Rice & Grains",
-        unit: "500 g pack",
-        price: 12,
-        wholesalePrice: 10,
-        wholesaleMin: 12,
-        image: "https://images.unsplash.com/photo-1551462147-37885acc36f1?auto=format&fit=crop&w=600&q=80"
+        name: "PVC Pipe Elbow",
+        category: "plumbing",
+        description: "Pipe elbow fitting. Confirm size.",
+        price: 8.00,
+        unit: "per piece",
+        tag: "Plumbing",
+        image: "https://images.unsplash.com/photo-1607400201889-565b1ee75f8e?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 6,
-        name: "Bottled Water",
-        category: "Drinks & Dairy",
-        unit: "1 bottle",
-        price: 4,
-        wholesalePrice: 3,
-        wholesaleMin: 24,
-        image: "https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&w=600&q=80"
+        name: "PVC Pipe Connector",
+        category: "plumbing",
+        description: "Pipe connector for plumbing work.",
+        price: 6.00,
+        unit: "per piece",
+        tag: "Plumbing",
+        image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 7,
-        name: "Bathing Soap",
-        category: "Home & Personal Care",
-        unit: "1 bar",
-        price: 8,
-        wholesalePrice: 6.5,
-        wholesaleMin: 12,
-        image: "https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?auto=format&fit=crop&w=600&q=80"
+        name: "Plumbing Tap",
+        category: "plumbing",
+        description: "Water tap. Confirm type and finish.",
+        price: 55.00,
+        unit: "per piece",
+        tag: "Plumbing",
+        image: "https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 8,
-        name: "Laundry Detergent",
-        category: "Home & Personal Care",
-        unit: "1 pack",
-        price: 18,
-        wholesalePrice: 15,
-        wholesaleMin: 10,
-        image: "https://images.unsplash.com/photo-1585421514738-01798e348b17?auto=format&fit=crop&w=600&q=80"
+        name: "Wheelbarrow",
+        category: "other",
+        description: "For moving materials around the site.",
+        price: 450.00,
+        unit: "per piece",
+        tag: "Equipment",
+        image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 9,
-        name: "Granulated Sugar",
-        category: "Rice & Grains",
-        unit: "1 kg bag",
-        price: 18,
-        wholesalePrice: 15,
-        wholesaleMin: 10,
-        image: "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&w=600&q=80"
+        name: "Construction Shovel",
+        category: "other",
+        description: "Hand tool for general site work.",
+        price: 85.00,
+        unit: "per piece",
+        tag: "Tools",
+        image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 10,
-        name: "Breakfast Biscuits",
-        category: "Snacks & Biscuits",
-        unit: "1 pack",
-        price: 5,
-        wholesalePrice: 4,
-        wholesaleMin: 24,
-        image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=600&q=80"
+        name: "Concrete Building Blocks",
+        category: "blocks",
+        description: "Order blocks in your required quantity.",
+        price: 8.00,
+        unit: "per block",
+        tag: "Bulk Orders",
+        image: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 11,
-        name: "Canned Sardines",
-        category: "Canned Foods",
-        unit: "1 tin",
-        price: 12,
-        wholesalePrice: 10,
-        wholesaleMin: 12,
-        image: "https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fit=crop&w=600&q=80"
+        name: "Plumbing Pipe Fittings",
+        category: "plumbing",
+        description: "Ask about available sizes and fittings.",
+        price: 12.00,
+        unit: "per piece",
+        tag: "Plumbing",
+        image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=700&q=80"
     },
     {
         id: 12,
-        name: "Malt Drink",
-        category: "Drinks & Dairy",
-        unit: "1 bottle",
-        price: 9,
-        wholesalePrice: 7.5,
-        wholesaleMin: 24,
-        image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=600&q=80"
+        name: "Construction Safety Helmet",
+        category: "other",
+        description: "Safety equipment for construction work.",
+        price: 95.00,
+        unit: "per piece",
+        tag: "Safety",
+        image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=700&q=80"
     }
 ];
 
-const categoryIcons = {
-    "Rice & Grains": "🌾",
-    "Cooking Essentials": "🫒",
-    "Drinks & Dairy": "🥛",
-    "Canned Foods": "🥫",
-    "Home & Personal Care": "🧼",
-    "Snacks & Biscuits": "🍪"
+const categoryNames = {
+    blocks: "Concrete Blocks",
+    cement: "Cement",
+    plumbing: "Plumbing",
+    other: "Other Supplies"
 };
 
-// Current page state
-let selectedCategory = "All";
+const cart = new Map();
+
+let activeCategory = "all";
 let searchTerm = "";
-let cart = loadCart();
-let cardQuantities = {};
+let toastTimer;
 
-// Safe cart loading
-function loadCart() {
-    try {
-        const saved = JSON.parse(localStorage.getItem("provisionHubCart"));
+const productGrid = document.getElementById("productGrid");
+const cartCount = document.getElementById("cartCount");
+const cartItems = document.getElementById("cartItems");
+const cartSubtotal = document.getElementById("cartSubtotal");
+const checkoutSubtotal = document.getElementById("checkoutSubtotal");
+const cartDrawer = document.getElementById("cartDrawer");
+const drawerBackdrop = document.getElementById("drawerBackdrop");
+const checkoutModal = document.getElementById("checkoutModal");
+const toast = document.getElementById("toast");
 
-        if (!Array.isArray(saved)) return [];
-
-        return saved.filter(item => {
-            return products.some(product => product.id === item.id) &&
-                Number.isInteger(item.quantity) &&
-                item.quantity > 0 &&
-                item.quantity <= 10000;
-        });
-    } catch {
-        return [];
-    }
+function money(amount) {
+    return new Intl.NumberFormat("en-GH", {
+        style: "currency",
+        currency: "GHS",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(amount);
 }
 
-function saveCart() {
-    try {
-        localStorage.setItem("provisionHubCart", JSON.stringify(cart));
-    } catch {
-        showToast("Your browser could not save the cart.");
-    }
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, function (character) {
+        const entities = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        };
+        return entities[character];
+    });
 }
 
 function getProduct(id) {
-    return products.find(product => product.id === id);
+    return products.find(product => product.id === Number(id));
 }
 
-function getCartItem(id) {
-    return cart.find(item => item.id === id);
+function getCartQuantity() {
+    let quantity = 0;
+
+    cart.forEach(item => {
+        quantity += item.quantity;
+    });
+
+    return quantity;
 }
 
-// Wholesale price applies to all units of a product
-// once its individual minimum quantity is reached.
-function unitPrice(product, quantity) {
-    return quantity >= product.wholesaleMin
-        ? product.wholesalePrice
-        : product.price;
-}
+function getCartTotal() {
+    let total = 0;
 
-function lineTotal(product, quantity) {
-    return unitPrice(product, quantity) * quantity;
-}
-
-function cartSubtotal() {
-    return cart.reduce((total, item) => {
+    cart.forEach(item => {
         const product = getProduct(item.id);
-        return product
-            ? total + lineTotal(product, item.quantity)
-            : total;
-    }, 0);
-}
 
-function cartItemCount() {
-    return cart.reduce((total, item) => total + item.quantity, 0);
-}
-
-// Build categories
-function renderCategories() {
-    const grid = document.getElementById("categoryGrid");
-    const filter = document.getElementById("categoryFilter");
-
-    const categories = [...new Set(products.map(p => p.category))];
-
-    grid.innerHTML = "";
-
-    categories.forEach(category => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className =
-            "category-card" +
-            (selectedCategory === category ? " active" : "");
-
-        const icon = document.createElement("span");
-        icon.className = "category-icon";
-        icon.textContent = categoryIcons[category] || "🛍️";
-
-        const name = document.createElement("strong");
-        name.textContent = category;
-
-        button.append(icon, name);
-        button.addEventListener("click", () => {
-            selectedCategory =
-                selectedCategory === category ? "All" : category;
-
-            filter.value = selectedCategory;
-            renderCategories();
-            renderProducts();
-            document.getElementById("shop").scrollIntoView({
-                behavior: "smooth"
-            });
-        });
-
-        grid.appendChild(button);
+        if (product) {
+            total += product.price * item.quantity;
+        }
     });
 
-    filter.innerHTML = "";
-
-    const allOption = document.createElement("option");
-    allOption.value = "All";
-    allOption.textContent = "All products";
-    filter.appendChild(allOption);
-
-    categories.forEach(category => {
-        const option = document.createElement("option");
-        option.value = category;
-        option.textContent = category;
-        filter.appendChild(option);
-    });
-
-    filter.value = selectedCategory;
+    return total;
 }
 
-// Build product cards
+function getCategoryLabel(category) {
+    return categoryNames[category] || "Building Materials";
+}
+
+/* =========================================
+   PRODUCT DISPLAY
+========================================= */
+
 function renderProducts() {
-    const grid = document.getElementById("productGrid");
-    const emptyMessage = document.getElementById("emptyMessage");
-
-    grid.innerHTML = "";
-
-    const filtered = products.filter(product => {
+    let filteredProducts = products.filter(product => {
         const matchesCategory =
-            selectedCategory === "All" ||
-            product.category === selectedCategory;
+            activeCategory === "all" ||
+            product.category === activeCategory;
 
-        const matchesSearch =
-            `${product.name} ${product.category} ${product.unit}`
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase());
+        const searchableText = [
+            product.name,
+            product.description,
+            product.category,
+            getCategoryLabel(product.category)
+        ].join(" ").toLowerCase();
+
+        const matchesSearch = searchableText.includes(searchTerm);
 
         return matchesCategory && matchesSearch;
     });
 
-    emptyMessage.hidden = filtered.length !== 0;
+    const sortValue = document.getElementById("sortProducts").value;
 
-    filtered.forEach(product => {
-        const quantity = cardQuantities[product.id] || 1;
+    if (sortValue === "low") {
+        filteredProducts.sort((a, b) => a.price - b.price);
+    } else if (sortValue === "high") {
+        filteredProducts.sort((a, b) => b.price - a.price);
+    } else if (sortValue === "name") {
+        filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+    }
 
-        const card = document.createElement("article");
-        card.className = "product-card";
+    document.getElementById("resultsMessage").textContent =
+        `${filteredProducts.length} product${filteredProducts.length === 1 ? "" : "s"} found`;
 
-        const photo = document.createElement("div");
-        photo.className = "product-photo";
+    if (filteredProducts.length === 0) {
+        productGrid.innerHTML = `
+            <div class="no-products">
+                <h3>No products found</h3>
+                <p>Try another product name or choose a different category.</p>
+            </div>
+        `;
+        return;
+    }
 
-        const image = document.createElement("img");
-        image.src = product.image;
-        image.alt = product.name;
-        image.loading = "lazy";
+    productGrid.innerHTML = filteredProducts.map(product => `
+        <article class="product-card">
+            <div class="product-image-wrap">
+                <img
+                    class="product-image"
+                    src="${escapeHTML(product.image)}"
+                    alt="${escapeHTML(product.name)}"
+                    loading="lazy"
+                    onerror="this.onerror=null;this.src='https://placehold.co/600x400/eaf2fc/123b70?text=ESSMASS+ENTERPRISE'">
+                <span class="product-tag">${escapeHTML(product.tag)}</span>
+            </div>
 
-        image.onerror = () => {
-            image.onerror = null;
-            image.src =
-                "https://placehold.co/600x600/f3f4ef/176b43?text=Provision";
-        };
+            <div class="product-details">
+                <span class="product-category">
+                    ${escapeHTML(getCategoryLabel(product.category))}
+                </span>
 
-        const tag = document.createElement("span");
-        tag.className = "product-tag";
-        tag.textContent = "In stock";
+                <h3>${escapeHTML(product.name)}</h3>
+                <p class="product-description">
+                    ${escapeHTML(product.description)}
+                </p>
 
-        photo.append(image, tag);
+                <div class="product-price">
+                    ${money(product.price)}
+                    <span class="product-unit">/ ${escapeHTML(product.unit.replace(/^per /, ""))}</span>
+                </div>
 
-        const info = document.createElement("div");
-        info.className = "product-info";
+                <div class="product-actions">
+                    <input
+                        class="quantity-input"
+                        type="number"
+                        min="1"
+                        max="100000"
+                        step="1"
+                        value="1"
+                        aria-label="Quantity for ${escapeHTML(product.name)}"
+                        data-quantity="${product.id}">
 
-        const category = document.createElement("span");
-        category.className = "product-category";
-        category.textContent = product.category;
+                    <button
+                        type="button"
+                        class="add-cart-btn"
+                        data-add="${product.id}">
+                        + Add to Cart
+                    </button>
+                </div>
+            </div>
+        </article>
+    `).join("");
+}
 
-        const name = document.createElement("h3");
-        name.textContent = product.name;
+/* =========================================
+   CATEGORY FILTERS AND SEARCH
+========================================= */
 
-        const priceRow = document.createElement("div");
-        priceRow.className = "price-row";
+function setCategory(category) {
+    activeCategory = category;
 
-        const price = document.createElement("span");
-        price.className = "retail-price";
-        price.textContent = money(product.price);
-
-        const unit = document.createElement("span");
-        unit.className = "unit-label";
-        unit.textContent = `/ ${product.unit}`;
-
-        priceRow.append(price, unit);
-
-        const wholesale = document.createElement("p");
-        wholesale.className = "wholesale-price";
-        wholesale.textContent =
-            `${money(product.wholesalePrice)} wholesale `;
-
-        const minimum = document.createElement("span");
-        minimum.className = "minimum-label";
-        minimum.textContent =
-            `(from ${product.wholesaleMin} units)`;
-
-        wholesale.appendChild(minimum);
-
-        const quantityRow = document.createElement("div");
-        quantityRow.className = "quantity-row";
-
-        const quantityControl = document.createElement("div");
-        quantityControl.className = "quantity-control";
-
-        const minus = document.createElement("button");
-        minus.type = "button";
-        minus.textContent = "−";
-        minus.setAttribute("aria-label", `Decrease ${product.name} quantity`);
-
-        const quantityDisplay = document.createElement("span");
-        quantityDisplay.textContent = quantity;
-
-        const plus = document.createElement("button");
-        plus.type = "button";
-        plus.textContent = "+";
-        plus.setAttribute("aria-label", `Increase ${product.name} quantity`);
-
-        minus.addEventListener("click", () => {
-            cardQuantities[product.id] = Math.max(1, quantity - 1);
-            renderProducts();
-        });
-
-        plus.addEventListener("click", () => {
-            if (quantity >= 10000) {
-                showToast("Maximum quantity reached.");
-                return;
-            }
-
-            cardQuantities[product.id] = quantity + 1;
-            renderProducts();
-        });
-
-        quantityControl.append(minus, quantityDisplay, plus);
-
-        const addButton = document.createElement("button");
-        addButton.type = "button";
-        addButton.className = "add-button";
-        addButton.textContent = "Add to Cart";
-
-        addButton.addEventListener("click", () => {
-            addToCart(product.id, quantity);
-        });
-
-        quantityRow.append(quantityControl, addButton);
-        info.append(category, name, priceRow, wholesale, quantityRow);
-        card.append(photo, info);
-        grid.appendChild(card);
+    document.querySelectorAll(".filter-btn").forEach(button => {
+        button.classList.toggle(
+            "active",
+            button.dataset.category === category
+        );
     });
+
+    renderProducts();
 }
 
-// Cart operations
-function addToCart(id, quantity) {
-    const existing = getCartItem(id);
-    const currentQuantity = existing ? existing.quantity : 0;
+document.getElementById("filterButtons").addEventListener("click", event => {
+    const button = event.target.closest("[data-category]");
 
-    if (currentQuantity + quantity > 10000) {
-        showToast("Maximum quantity reached.");
-        return;
+    if (button) {
+        setCategory(button.dataset.category);
     }
+});
 
-    if (existing) {
-        existing.quantity += quantity;
-    } else {
-        cart.push({ id, quantity });
+document.getElementById("categoryGrid").addEventListener("click", event => {
+    const button = event.target.closest("[data-category]");
+
+    if (button) {
+        setCategory(button.dataset.category);
+        document.getElementById("shop").scrollIntoView({
+            behavior: "smooth"
+        });
     }
+});
 
-    saveCart();
-    renderCart();
-    showToast(`${getProduct(id).name} added to your cart.`);
-}
-
-function removeFromCart(id) {
-    cart = cart.filter(item => item.id !== id);
-    saveCart();
-    renderCart();
-}
-
-function renderCart() {
-    const itemsContainer = document.getElementById("cartItems");
-
-    itemsContainer.innerHTML = "";
-
-    document.getElementById("cartCount").textContent = cartItemCount();
-    document.getElementById("cartSubtotal").textContent =
-        money(cartSubtotal());
-
-    document.getElementById("checkoutSubtotal").textContent =
-        money(cartSubtotal());
-
-    if (cart.length === 0) {
-        const empty = document.createElement("p");
-        empty.className = "cart-empty";
-        empty.textContent = "Your cart is empty. Add some provisions to get started.";
-        itemsContainer.appendChild(empty);
-        return;
-    }
-
-    cart.forEach(item => {
-        const product = getProduct(item.id);
-        if (!product) return;
-
-        const row = document.createElement("div");
-        row.className = "cart-item";
-
-        const image = document.createElement("img");
-        image.src = product.image;
-        image.alt = product.name;
-
-        const details = document.createElement("div");
-
-        const name = document.createElement("h3");
-        name.textContent = product.name;
-
-        const price = document.createElement("p");
-        price.textContent =
-            `${item.quantity} × ${money(unitPrice(product, item.quantity))}`;
-
-        const remove = document.createElement("button");
-        remove.type = "button";
-        remove.className = "remove-item";
-        remove.textContent = "Remove";
-        remove.addEventListener("click", () => removeFromCart(item.id));
-
-        details.append(name, price, remove);
-
-        const total = document.createElement("strong");
-        total.textContent = money(lineTotal(product, item.quantity));
-        total.style.fontSize = "12px";
-
-        row.append(image, details, total);
-        itemsContainer.appendChild(row);
-    });
-}
-
-// Cart drawer
-function openCart() {
-    document.getElementById("cartDrawer").classList.add("open");
-    document.getElementById("overlay").classList.add("visible");
-    document.body.classList.add("no-scroll");
-}
-
-function closeCart() {
-    document.getElementById("cartDrawer").classList.remove("open");
-    document.getElementById("overlay").classList.remove("visible");
-
-    if (document.getElementById("checkoutModal").hidden) {
-        document.body.classList.remove("no-scroll");
-    }
-}
-
-// Checkout window
-function openCheckout() {
-    if (cart.length === 0) {
-        showToast("Your cart is empty.");
-        return;
-    }
-
-    document.getElementById("checkoutModal").hidden = false;
-    document.getElementById("overlay").classList.add("visible");
-    document.body.classList.add("no-scroll");
-}
-
-function closeCheckout() {
-    document.getElementById("checkoutModal").hidden = true;
-    document.getElementById("overlay").classList.remove("visible");
-    document.body.classList.remove("no-scroll");
-}
-
-function showToast(message) {
-    const toast = document.getElementById("toast");
-    toast.textContent = message;
-    toast.classList.add("show");
-
-    clearTimeout(showToast.timeout);
-
-    showToast.timeout = setTimeout(() => {
-        toast.classList.remove("show");
-    }, 2600);
-}
-
-// Search
 document.getElementById("searchForm").addEventListener("submit", event => {
     event.preventDefault();
 
-    searchTerm = document.getElementById("searchInput").value.trim();
+    searchTerm = document.getElementById("searchInput")
+        .value.trim().toLowerCase();
+
     renderProducts();
 
     document.getElementById("shop").scrollIntoView({
@@ -552,106 +363,379 @@ document.getElementById("searchForm").addEventListener("submit", event => {
 });
 
 document.getElementById("searchInput").addEventListener("input", event => {
-    searchTerm = event.target.value.trim();
+    searchTerm = event.target.value.trim().toLowerCase();
     renderProducts();
 });
 
-document.getElementById("categoryFilter").addEventListener("change", event => {
-    selectedCategory = event.target.value;
-    renderCategories();
-    renderProducts();
+document.getElementById("sortProducts").addEventListener("change", renderProducts);
+
+/* =========================================
+   SHOPPING CART
+========================================= */
+
+function showToast(message) {
+    clearTimeout(toastTimer);
+
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2500);
+}
+
+function addToCart(productId, quantity) {
+    const product = getProduct(productId);
+
+    if (!product) return;
+
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 100000) {
+        showToast("Please enter a valid quantity.");
+        return;
+    }
+
+    const currentQuantity = cart.has(product.id)
+        ? cart.get(product.id).quantity
+        : 0;
+
+    if (currentQuantity + quantity > 100000) {
+        showToast("Please contact us for this quantity.");
+        return;
+    }
+
+    cart.set(product.id, {
+        id: product.id,
+        quantity: currentQuantity + quantity
+    });
+
+    renderCart();
+    showToast(`${product.name} added to your cart.`);
+}
+
+function changeCartQuantity(productId, change) {
+    const item = cart.get(Number(productId));
+
+    if (!item) return;
+
+    const newQuantity = item.quantity + change;
+
+    if (newQuantity <= 0) {
+        cart.delete(Number(productId));
+    } else if (newQuantity <= 100000) {
+        item.quantity = newQuantity;
+        cart.set(Number(productId), item);
+    } else {
+        showToast("Please contact us for larger orders.");
+    }
+
+    renderCart();
+}
+
+function removeFromCart(productId) {
+    cart.delete(Number(productId));
+    renderCart();
+}
+
+function renderCart() {
+    cartCount.textContent = getCartQuantity();
+
+    const total = getCartTotal();
+    cartSubtotal.textContent = money(total);
+    checkoutSubtotal.textContent = money(total);
+
+    if (cart.size === 0) {
+        cartItems.innerHTML = `
+            <div class="cart-empty">
+                <div style="font-size:38px;margin-bottom:12px;">🛒</div>
+                <h3>Your cart is empty</h3>
+                <p style="margin-top:8px;">Add building materials to start an order.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+    cartItems.innerHTML = Array.from(cart.values()).map(item => {
+        const product = getProduct(item.id);
+
+        if (!product) return "";
+
+        return `
+            <div class="cart-item">
+                <img
+                    src="${escapeHTML(product.image)}"
+                    alt="${escapeHTML(product.name)}"
+                    onerror="this.onerror=null;this.src='https://placehold.co/100x100/eaf2fc/123b70?text=Product'">
+
+                <div>
+                    <h3>${escapeHTML(product.name)}</h3>
+                    <small>${money(product.price)} / ${escapeHTML(product.unit.replace(/^per /, ""))}</small>
+
+                    <div class="cart-quantity">
+                        <button type="button" data-minus="${product.id}" aria-label="Decrease quantity">−</button>
+                        <span>${item.quantity}</span>
+                        <button type="button" data-plus="${product.id}" aria-label="Increase quantity">+</button>
+                    </div>
+
+                    <div class="cart-item-price">
+                        ${money(product.price * item.quantity)}
+                    </div>
+                </div>
+
+                <button
+                    class="remove-item"
+                    type="button"
+                    data-remove="${product.id}">
+                    Remove
+                </button>
+            </div>
+        `;
+    }).join("");
+}
+
+productGrid.addEventListener("click", event => {
+    const button = event.target.closest("[data-add]");
+
+    if (!button) return;
+
+    const productId = Number(button.dataset.add);
+    const quantityInput = productGrid.querySelector(
+        `[data-quantity="${productId}"]`
+    );
+
+    const quantity = Number(quantityInput.value);
+
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 100000) {
+        showToast("Enter a whole-number quantity between 1 and 100000.");
+        quantityInput.focus();
+        return;
+    }
+
+    addToCart(productId, quantity);
 });
 
-// Buttons and overlay
-document.getElementById("cartButton").addEventListener("click", openCart);
+cartItems.addEventListener("click", event => {
+    const plusButton = event.target.closest("[data-plus]");
+    const minusButton = event.target.closest("[data-minus]");
+    const removeButton = event.target.closest("[data-remove]");
+
+    if (plusButton) {
+        changeCartQuantity(plusButton.dataset.plus, 1);
+    } else if (minusButton) {
+        changeCartQuantity(minusButton.dataset.minus, -1);
+    } else if (removeButton) {
+        removeFromCart(removeButton.dataset.remove);
+    }
+});
+
+/* =========================================
+   CART DRAWER
+========================================= */
+
+function openCart() {
+    cartDrawer.classList.add("open");
+    drawerBackdrop.classList.add("visible");
+    cartDrawer.setAttribute("aria-hidden", "false");
+    document.body.classList.add("no-scroll");
+    document.getElementById("closeCart").focus();
+}
+
+function closeCart() {
+    cartDrawer.classList.remove("open");
+    drawerBackdrop.classList.remove("visible");
+    cartDrawer.setAttribute("aria-hidden", "true");
+
+    if (!checkoutModal.classList.contains("visible")) {
+        document.body.classList.remove("no-scroll");
+    }
+}
+
+document.getElementById("openCart").addEventListener("click", openCart);
 document.getElementById("closeCart").addEventListener("click", closeCart);
-document.getElementById("overlay").addEventListener("click", () => {
-    closeCart();
-    closeCheckout();
-});
+document.getElementById("continueShopping").addEventListener("click", closeCart);
+drawerBackdrop.addEventListener("click", closeCart);
 
-document.getElementById("checkoutButton").addEventListener("click", () => {
-    if (cart.length === 0) {
-        showToast("Your cart is empty.");
+/* =========================================
+   CHECKOUT
+========================================= */
+
+function openCheckout() {
+    if (cart.size === 0) {
+        showToast("Please add products to your cart first.");
         return;
     }
 
     closeCart();
-    openCheckout();
-});
 
+    checkoutSubtotal.textContent = money(getCartTotal());
+    checkoutModal.classList.add("visible");
+    checkoutModal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("no-scroll");
+    document.getElementById("checkoutTitle").scrollIntoView({
+        behavior: "auto",
+        block: "nearest"
+    });
+}
+
+function closeCheckout() {
+    checkoutModal.classList.remove("visible");
+    checkoutModal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("no-scroll");
+}
+
+document.getElementById("checkoutButton").addEventListener("click", openCheckout);
 document.getElementById("closeCheckout").addEventListener("click", closeCheckout);
 
-// Send order details to WhatsApp
-document.getElementById("checkoutForm").addEventListener("submit", event => {
-    event.preventDefault();
-
-    if (cart.length === 0) {
-        showToast("Your cart is empty.");
+checkoutModal.addEventListener("click", event => {
+    if (event.target === checkoutModal) {
         closeCheckout();
-        return;
+    }
+});
+
+document.getElementById("fulfilmentSelect").addEventListener("change", event => {
+    const isDelivery = event.target.value === "Delivery";
+    const addressField = document.getElementById("addressField");
+    const addressInput = document.getElementById("deliveryAddress");
+
+    addressField.style.display = isDelivery ? "grid" : "none";
+    addressInput.required = isDelivery;
+
+    if (!isDelivery) {
+        addressInput.value = "";
+    }
+});
+
+function getWhatsAppURL(message) {
+    if (!/^233\d{9}$/.test(SHOP_WHATSAPP)) {
+        showToast("Please configure the shop's WhatsApp number in script.js.");
+        return null;
     }
 
-    if (!/^\d{10,15}$/.test(WHATSAPP_NUMBER)) {
-        showToast("Set your real WhatsApp number in script.js first.");
-        return;
-    }
+    return "https://wa.me/" + SHOP_WHATSAPP +
+        "?text=" + encodeURIComponent(message);
+}
 
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-
-    const customerName = String(formData.get("customerName") || "").trim();
-    const phone = String(formData.get("phone") || "").trim();
-    const address = String(formData.get("address") || "").trim();
-    const orderType = String(formData.get("orderType") || "");
-    const notes = String(formData.get("notes") || "").trim();
-
-    if (!customerName || !phone || !address) {
-        showToast("Please complete your delivery details.");
-        return;
-    }
+function buildOrderMessage(formData) {
+    const orderReference = "ESS-" + Date.now().toString().slice(-8);
 
     const lines = [
-        "NEW PROVISION ORDER",
-        "--------------------------",
-        `Name: ${customerName}`,
-        `Phone: ${phone}`,
-        `Delivery address: ${address}`,
-        `Order type: ${orderType}`,
+        "NEW ORDER REQUEST - ESSMASS ENTERPRISE",
+        "Order reference: " + orderReference,
         "",
-        "ORDER ITEMS:"
+        "CUSTOMER DETAILS",
+        "Name: " + formData.get("customerName").trim(),
+        "Phone: " + formData.get("phone").trim(),
+        "Order type: " + formData.get("orderType"),
+        "Fulfilment: " + formData.get("fulfilment")
     ];
+
+    if (formData.get("fulfilment") === "Delivery") {
+        lines.push("Delivery address: " + formData.get("address").trim());
+    }
+
+    lines.push("", "ORDER ITEMS");
 
     cart.forEach(item => {
         const product = getProduct(item.id);
-        if (!product) return;
 
-        lines.push(
-            `${product.name} - ${item.quantity} x ${money(unitPrice(product, item.quantity))} = ${money(lineTotal(product, item.quantity))}`
-        );
-
-        if (item.quantity >= product.wholesaleMin) {
-            lines.push(`  Wholesale price applied; minimum ${product.wholesaleMin} units.`);
+        if (product) {
+            lines.push(
+                "- " + product.name +
+                " x " + item.quantity +
+                " (" + product.unit + ")" +
+                " = " + money(product.price * item.quantity)
+            );
         }
     });
 
     lines.push(
         "",
-        `PRODUCT SUBTOTAL: ${money(cartSubtotal())}`,
-        "Delivery fee: To be confirmed",
-        `Instructions: ${notes || "None"}`,
+        "Estimated subtotal: " + money(getCartTotal()),
+        "Delivery charge: To be confirmed",
         "",
-        "Please confirm stock, delivery fee and final order total."
+        "Additional instructions: " +
+            (formData.get("notes").trim() || "None"),
+        "",
+        "Please confirm product availability, current prices, delivery charges and final total. Thank you."
     );
 
-    const whatsappURL =
-        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(lines.join("\n"))}`;
+    return lines.join("\n");
+}
 
-    // Opens WhatsApp; the customer must press Send there.
+document.getElementById("checkoutForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    if (cart.size === 0) {
+        showToast("Your cart is empty.");
+        closeCheckout();
+        return;
+    }
+
+    const form = event.currentTarget;
+
+    if (!form.reportValidity()) {
+        return;
+    }
+
+    const formData = new FormData(form);
+
+    if (formData.get("fulfilment") === "Delivery" &&
+        !String(formData.get("address") || "").trim()) {
+        showToast("Please enter your delivery address.");
+        return;
+    }
+
+    const message = buildOrderMessage(formData);
+    const whatsappURL = getWhatsAppURL(message);
+
+    if (!whatsappURL) return;
+
+    // Open WhatsApp only after the customer submits the form.
     window.open(whatsappURL, "_blank", "noopener,noreferrer");
 });
 
-// Keyboard support
+/* =========================================
+   CONTACT WHATSAPP BUTTON
+========================================= */
+
+document.getElementById("contactWhatsApp").addEventListener("click", event => {
+    event.preventDefault();
+
+    const message =
+        "Hello ESSMASS ENTERPRISE. I am interested in your building materials. " +
+        "Please share your current prices and availability.";
+
+    const whatsappURL = getWhatsAppURL(message);
+
+    if (whatsappURL) {
+        window.open(whatsappURL, "_blank", "noopener,noreferrer");
+    }
+});
+
+/* =========================================
+   MOBILE NAVIGATION
+========================================= */
+
+const menuToggle = document.getElementById("menuToggle");
+const navLinks = document.getElementById("navLinks");
+
+menuToggle.addEventListener("click", () => {
+    const isOpen = navLinks.classList.toggle("open");
+
+    menuToggle.setAttribute("aria-expanded", String(isOpen));
+});
+
+navLinks.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => {
+        navLinks.classList.remove("open");
+        menuToggle.setAttribute("aria-expanded", "false");
+    });
+});
+
+/* =========================================
+   ESCAPE KEY AND INITIAL DISPLAY
+========================================= */
+
 document.addEventListener("keydown", event => {
     if (event.key === "Escape") {
         closeCart();
@@ -659,9 +743,8 @@ document.addEventListener("keydown", event => {
     }
 });
 
-// Start the shop
-document.getElementById("year").textContent = new Date().getFullYear();
+document.getElementById("currentYear").textContent =
+    new Date().getFullYear();
 
-renderCategories();
 renderProducts();
 renderCart();

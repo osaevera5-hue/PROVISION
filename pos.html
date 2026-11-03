@@ -1,0 +1,1003 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#123b70">
+<title>Owner POS Login | ESSMASS ENTERPRISE</title>
+
+<style>
+:root {
+  --navy:#123b70;
+  --dark:#0b2a50;
+  --gold:#e8b64b;
+  --ink:#18283d;
+  --muted:#64748b;
+  --line:#e1e7ef;
+  --bg:#f4f7fb;
+}
+
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Arial,sans-serif;
+}
+
+body.locked { overflow:hidden; }
+body.locked #app { display:none; }
+
+header {
+  background:var(--dark);
+  color:white;
+  padding:18px max(16px,calc((100% - 1180px)/2));
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.brand { font-size:21px; font-weight:bold; }
+.brand span { color:var(--gold); }
+
+.sub {
+  display:block;
+  font-size:10px;
+  letter-spacing:2px;
+  margin-top:5px;
+}
+
+.header-actions {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+header a, .logout {
+  color:white;
+  text-decoration:none;
+  border:1px solid #ffffff66;
+  padding:10px 13px;
+  border-radius:8px;
+  background:transparent;
+  font:inherit;
+  font-size:13px;
+  cursor:pointer;
+}
+
+main {
+  max-width:1180px;
+  margin:28px auto;
+  padding:0 16px;
+}
+
+.intro { margin-bottom:20px; }
+.intro h1 { margin-bottom:8px; }
+.intro p { color:var(--muted); line-height:1.5; }
+
+.layout {
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:18px;
+  align-items:start;
+}
+
+.panel {
+  background:white;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:19px;
+  box-shadow:0 8px 24px #142b4510;
+  min-width:0;
+}
+
+.panel h2 { margin-top:0; font-size:20px; }
+
+.field {
+  display:block;
+  width:100%;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
+  padding:11px 12px;
+  margin-bottom:10px;
+  background:white;
+  font:inherit;
+}
+
+.field-label {
+  display:block;
+  font-size:13px;
+  font-weight:bold;
+  margin:12px 0 6px;
+}
+
+.products {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-top:12px;
+}
+
+.product {
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:13px;
+  text-align:left;
+  background:white;
+  cursor:pointer;
+  min-height:90px;
+}
+
+.product:hover {
+  border-color:var(--navy);
+  background:#f7faff;
+}
+
+.product strong { display:block; margin-bottom:7px; }
+.product span { color:var(--navy); font-weight:bold; }
+.product small { display:block; color:var(--muted); margin-top:5px; }
+
+.bill { display:grid; gap:10px; margin:12px 0; }
+
+.bill-row {
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  border-bottom:1px solid var(--line);
+  padding-bottom:12px;
+}
+
+.bill-row strong { font-size:14px; }
+.muted { font-size:12px; color:var(--muted); margin-top:5px; }
+
+.qty {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-top:8px;
+  flex-wrap:wrap;
+}
+
+.qty button {
+  min-width:28px;
+  min-height:28px;
+  border:1px solid var(--line);
+  background:#f8fafc;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.qty .remove {
+  border:0;
+  color:#b42318;
+  background:white;
+  width:auto;
+}
+
+.empty {
+  padding:18px;
+  text-align:center;
+  border:1px dashed #cbd5e1;
+  border-radius:9px;
+  color:var(--muted);
+}
+
+.total-row {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  border-top:1px solid var(--line);
+  padding-top:13px;
+  margin-top:12px;
+}
+
+.grand {
+  font-size:24px;
+  color:var(--navy);
+  font-weight:bold;
+}
+
+.btn {
+  border:0;
+  border-radius:9px;
+  padding:12px 14px;
+  font:inherit;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.primary { background:var(--navy); color:white; }
+.secondary { background:#eef3f9; color:var(--navy); }
+.full { width:100%; margin-top:10px; }
+
+.hint {
+  font-size:12px;
+  line-height:1.5;
+  color:var(--muted);
+}
+
+.history { margin-top:18px; }
+
+.history-row {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  border-bottom:1px solid var(--line);
+  padding:10px 0;
+}
+
+.history-row button {
+  border:1px solid var(--line);
+  border-radius:7px;
+  background:white;
+  padding:8px;
+  cursor:pointer;
+}
+
+#receipt { display:none; }
+
+/* OWNER LOGIN SCREEN */
+#loginScreen {
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:linear-gradient(145deg,#0b2a50,#123b70);
+}
+
+.login-card {
+  width:100%;
+  max-width:410px;
+  background:white;
+  border-radius:18px;
+  padding:30px;
+  box-shadow:0 20px 70px #0004;
+}
+
+.login-logo {
+  text-align:center;
+  font-size:25px;
+  font-weight:800;
+  color:var(--navy);
+}
+
+.login-logo span { color:#c18a1a; }
+
+.login-icon {
+  width:65px;
+  height:65px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 18px;
+  border-radius:50%;
+  background:#eaf2fc;
+  font-size:29px;
+}
+
+.login-card h1 {
+  text-align:center;
+  font-size:23px;
+  margin:18px 0 8px;
+}
+
+.login-card p {
+  text-align:center;
+  color:var(--muted);
+  line-height:1.5;
+  font-size:14px;
+}
+
+.login-card .field { margin-top:15px; }
+
+.login-error {
+  color:#b42318 !important;
+  font-weight:bold;
+  min-height:20px;
+  margin:8px 0;
+}
+
+.login-note {
+  font-size:11px !important;
+  margin-top:18px;
+}
+
+@media(max-width:800px) {
+  .layout { grid-template-columns:1fr; }
+}
+
+@media(max-width:430px) {
+  .products { grid-template-columns:1fr; }
+  .panel { padding:14px; }
+  .login-card { padding:23px; }
+}
+
+@media print {
+  #loginScreen, #app { display:none !important; }
+  body * { visibility:hidden !important; }
+
+  #receipt, #receipt * { visibility:visible !important; }
+
+  #receipt {
+    display:block !important;
+    position:absolute;
+    left:0;
+    top:0;
+    width:72mm;
+    margin:0;
+    padding:2mm;
+    font-family:Arial,sans-serif;
+    font-size:11px;
+    color:black;
+  }
+
+  #receipt h2 {
+    font-size:16px;
+    text-align:center;
+    margin:0 0 4px;
+  }
+
+  #receipt p { text-align:center; margin:3px 0; }
+  .r-rule { border-top:1px dashed black; margin:7px 0; }
+
+  .r-row {
+    display:flex;
+    justify-content:space-between;
+    gap:5px;
+    margin:4px 0;
+  }
+
+  .r-item { margin:6px 0; }
+  .r-small { font-size:10px; }
+
+  @page { size:auto; margin:5mm; }
+}
+</style>
+</head>
+
+<body class="locked">
+
+<!-- OWNER LOGIN -->
+<section id="loginScreen">
+  <div class="login-card">
+    <div class="login-icon">🔐</div>
+
+    <div class="login-logo">
+      ESSMASS <span>ENTERPRISE</span>
+    </div>
+
+    <h1>Owner Login</h1>
+    <p>Enter your password to access the shop's Point of Sale.</p>
+
+    <form id="loginForm">
+      <label class="field-label" for="ownerPassword">
+        Owner password
+      </label>
+
+      <input
+        class="field"
+        id="ownerPassword"
+        type="password"
+        placeholder="Enter your password"
+        autocomplete="current-password"
+        required
+      >
+
+      <p id="loginError" class="login-error" role="alert"></p>
+
+      <button class="btn primary full" type="submit">
+        Unlock POS
+      </button>
+    </form>
+
+    <p class="login-note">
+      For shop-owner use only. This HTML password lock is a basic deterrent,
+      not strong security.
+    </p>
+  </div>
+</section>
+
+<!-- POS CONTENT: HIDDEN UNTIL LOGIN -->
+<div id="app">
+
+<header>
+  <div class="brand">
+    ESSMASS <span>ENTERPRISE</span>
+    <small class="sub">WALK-IN SALES & RECEIPTS</small>
+  </div>
+
+  <div class="header-actions">
+    <a href="index.html">← Back to website</a>
+    <button class="logout" id="logout">Lock POS</button>
+  </div>
+</header>
+
+<main>
+  <div class="intro">
+    <h1>Walk-in Point of Sale</h1>
+    <p>Add building materials bought by customers who come directly to your shop.</p>
+  </div>
+
+  <div class="layout">
+    <section class="panel">
+      <h2>Select building materials</h2>
+      <input class="field" id="search" type="search"
+        placeholder="Search products...">
+
+      <div class="products" id="products"></div>
+
+      <p class="hint">
+        These are sample prices. Update them to your actual shop prices.
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>Customer's bill</h2>
+
+      <label class="field-label" for="customer">Customer name</label>
+      <input class="field" id="customer" placeholder="Walk-in customer">
+
+      <label class="field-label" for="phone">Phone number</label>
+      <input class="field" id="phone" placeholder="Optional phone number">
+
+      <div class="bill" id="bill">
+        <div class="empty">Click a product to add it to the bill.</div>
+      </div>
+
+      <div class="total-row">
+        <strong>Total to pay</strong>
+        <span class="grand" id="total">GH₵0.00</span>
+      </div>
+
+      <label class="field-label" for="payment">Payment method</label>
+      <select class="field" id="payment">
+        <option>Cash</option>
+        <option>Mobile Money</option>
+        <option>Bank / Other</option>
+        <option>Credit / Unpaid</option>
+      </select>
+
+      <label class="field-label" for="received">Amount received (GH₵)</label>
+      <input class="field" id="received" type="number"
+        min="0" step="0.01" value="0">
+
+      <div class="total-row">
+        <span id="balanceLabel">Still to pay</span>
+        <strong id="balance">GH₵0.00</strong>
+      </div>
+
+      <button class="btn primary full" id="complete">
+        Complete Sale & Print Receipt
+      </button>
+
+      <button class="btn secondary full" id="clear">
+        Clear Current Bill
+      </button>
+
+      <p class="hint">
+        Choose your printer or Save as PDF in the print window.
+      </p>
+    </section>
+  </div>
+
+  <section class="panel history">
+    <h2>Recent sales & reprint receipts</h2>
+    <div id="history"></div>
+
+    <button class="btn secondary" id="export">
+      Export Sales to CSV
+    </button>
+
+    <p class="hint">
+      Sales are stored in this browser on this computer. Export your records
+      regularly. This prototype is not a secure accounting database.
+    </p>
+  </section>
+</main>
+
+</div>
+
+<section id="receipt" aria-label="Printable receipt"></section>
+
+<script>
+'use strict';
+
+/* ==========================================
+   OWNER PASSWORD SETTINGS
+
+   Change the password below before using POS.
+========================================== */
+
+const POS_PASSWORD = "ESSMASS123";
+
+/*
+  This remembers the unlocked state for the current
+  browser tab. Closing the tab ends that session.
+*/
+const SESSION_KEY = "essmass_pos_unlocked_session";
+const STORAGE = "essmass_walkin_sales_v2";
+
+const money = n => 'GH₵' + Number(n || 0).toLocaleString('en-GH', {
+  minimumFractionDigits:2,
+  maximumFractionDigits:2
+});
+
+const products = [
+  {id:'b5',name:'5-inch Concrete Block',price:7.50,unit:'each'},
+  {id:'b6',name:'6-inch Concrete Block',price:9,unit:'each'},
+  {id:'cement',name:'Cement (42.5)',price:105,unit:'bag'},
+  {id:'sand',name:'Building Sand',price:650,unit:'load'},
+  {id:'chip',name:'Chippings',price:850,unit:'load'},
+  {id:'iron10',name:'10mm Reinforcement Bar',price:95,unit:'length'},
+  {id:'iron12',name:'12mm Reinforcement Bar',price:135,unit:'length'},
+  {id:'pipe',name:'PVC Plumbing Pipe',price:38,unit:'length'},
+  {id:'paint',name:'Emulsion Paint',price:220,unit:'pail'},
+  {id:'nails',name:'Common Nails',price:25,unit:'pack'},
+  {id:'roof',name:'Roofing Sheet',price:115,unit:'sheet'},
+  {id:'tile',name:'Floor Tiles',price:180,unit:'box'}
+];
+
+let cart = [];
+
+const $ = id => document.getElementById(id);
+
+const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({
+  '&':'&amp;',
+  '<':'&lt;',
+  '>':'&gt;',
+  '"':'&quot;',
+  "'":'&#39;'
+}[c]));
+
+const total = () => cart.reduce((sum, item) => {
+  const product = products.find(p => p.id === item.id);
+  return sum + product.price * item.qty;
+}, 0);
+
+/* ==========================================
+   LOGIN AND LOCK
+========================================== */
+
+function isUnlocked() {
+  try {
+    return sessionStorage.getItem(SESSION_KEY) === 'yes';
+  } catch (error) {
+    return false;
+  }
+}
+
+function showLogin() {
+  document.body.classList.add('locked');
+  $('loginScreen').style.display = 'flex';
+  $('ownerPassword').value = '';
+  $('loginError').textContent = '';
+}
+
+function unlockPOS() {
+  document.body.classList.remove('locked');
+  $('loginScreen').style.display = 'none';
+  $('ownerPassword').value = '';
+  $('loginError').textContent = '';
+}
+
+$('loginForm').addEventListener('submit', event => {
+  event.preventDefault();
+
+  const entered = $('ownerPassword').value;
+
+  if (entered === POS_PASSWORD) {
+    try {
+      sessionStorage.setItem(SESSION_KEY, 'yes');
+    } catch (error) {
+      // The POS can still unlock for this page session.
+    }
+
+    unlockPOS();
+    return;
+  }
+
+  $('loginError').textContent = 'Incorrect password. Please try again.';
+  $('ownerPassword').value = '';
+  $('ownerPassword').focus();
+});
+
+$('logout').addEventListener('click', () => {
+  try {
+    sessionStorage.removeItem(SESSION_KEY);
+  } catch (error) {}
+
+  cart = [];
+  showLogin();
+});
+
+/* Show the login screen whenever this tab has not been unlocked. */
+if (isUnlocked()) {
+  unlockPOS();
+} else {
+  showLogin();
+}
+
+/* ==========================================
+   SALES STORAGE
+========================================== */
+
+function getSales() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE) || '[]');
+  } catch (error) {
+    return [];
+  }
+}
+
+function putSales(sales) {
+  localStorage.setItem(STORAGE, JSON.stringify(sales));
+}
+
+/* ==========================================
+   PRODUCTS
+========================================== */
+
+function drawProducts() {
+  const query = $('search').value.toLowerCase().trim();
+
+  const matches = products.filter(product =>
+    product.name.toLowerCase().includes(query)
+  );
+
+  $('products').innerHTML = matches.map(product => `
+    <button class="product" data-add="${product.id}">
+      <strong>${esc(product.name)}</strong>
+      <span>${money(product.price)}</span>
+      <small>Per ${esc(product.unit)} · Click to add</small>
+    </button>
+  `).join('') || '<div class="empty">No products found.</div>';
+}
+
+/* ==========================================
+   BILL AND PAYMENT CALCULATIONS
+========================================== */
+
+function updateBalance() {
+  const due = total();
+  const received = Math.max(0, Number($('received').value) || 0);
+  const credit = $('payment').value === 'Credit / Unpaid';
+
+  if (credit) {
+    $('balanceLabel').textContent = 'Amount outstanding';
+    $('balance').textContent = money(due);
+  } else if (received >= due) {
+    $('balanceLabel').textContent = 'Change';
+    $('balance').textContent = money(received - due);
+  } else {
+    $('balanceLabel').textContent = 'Still to pay';
+    $('balance').textContent = money(due - received);
+  }
+}
+
+function drawBill() {
+  if (!cart.length) {
+    $('bill').innerHTML =
+      '<div class="empty">Click a product to add it to the bill.</div>';
+  } else {
+    $('bill').innerHTML = cart.map(item => {
+      const product = products.find(p => p.id === item.id);
+
+      return `
+        <div class="bill-row">
+          <div>
+            <strong>${esc(product.name)}</strong>
+            <div class="muted">
+              ${money(product.price)} × ${item.qty} ${esc(product.unit)}
+              = ${money(product.price * item.qty)}
+            </div>
+            <div class="qty">
+              <button data-step="-1" data-id="${product.id}">−</button>
+              <span>${item.qty}</span>
+              <button data-step="1" data-id="${product.id}">+</button>
+              <button class="remove" data-remove="${product.id}">Remove</button>
+            </div>
+          </div>
+          <strong>${money(product.price * item.qty)}</strong>
+        </div>
+      `;
+    }).join('');
+  }
+
+  $('total').textContent = money(total());
+  updateBalance();
+}
+
+/* ==========================================
+   RECEIPTS
+========================================== */
+
+function makeReceipt(sale) {
+  const itemLines = sale.items.map(item => `
+    <div class="r-item">
+      <strong>${esc(item.name)}</strong>
+      <div class="r-row">
+        <span>${item.qty} × ${money(item.price)}</span>
+        <span>${money(item.qty * item.price)}</span>
+      </div>
+    </div>
+  `).join('');
+
+  const outstanding = sale.payment === 'Credit / Unpaid'
+    ? sale.total
+    : Math.max(0, sale.total - sale.received);
+
+  return `
+    <h2>ESSMASS ENTERPRISE</h2>
+    <p>Building Materials & Supplies</p>
+    <p>Ayimensah, Ghana</p>
+
+    <div class="r-rule"></div>
+
+    <div class="r-row">
+      <span>Receipt No.</span><strong>${esc(sale.number)}</strong>
+    </div>
+    <div class="r-row">
+      <span>Date</span><span>${esc(sale.date)}</span>
+    </div>
+    <div class="r-row">
+      <span>Customer</span>
+      <span>${esc(sale.customer || 'Walk-in customer')}</span>
+    </div>
+
+    ${sale.phone ? `
+      <div class="r-row">
+        <span>Phone</span><span>${esc(sale.phone)}</span>
+      </div>
+    ` : ''}
+
+    <div class="r-rule"></div>
+    ${itemLines}
+    <div class="r-rule"></div>
+
+    <div class="r-row">
+      <strong>TOTAL</strong><strong>${money(sale.total)}</strong>
+    </div>
+    <div class="r-row">
+      <span>Payment</span><span>${esc(sale.payment)}</span>
+    </div>
+    <div class="r-row">
+      <span>Amount received</span><span>${money(sale.received)}</span>
+    </div>
+    <div class="r-row">
+      <span>${sale.payment === 'Credit / Unpaid' ? 'Outstanding' : 'Still to pay'}</span>
+      <span>${money(outstanding)}</span>
+    </div>
+
+    ${sale.payment !== 'Credit / Unpaid' && sale.received >= sale.total ? `
+      <div class="r-row">
+        <span>Change</span>
+        <span>${money(sale.received - sale.total)}</span>
+      </div>
+    ` : ''}
+
+    <div class="r-rule"></div>
+    <p>Thank you for buying from us!</p>
+    <p class="r-small">Please keep this receipt for your records.</p>
+  `;
+}
+
+function printSale(sale) {
+  $('receipt').innerHTML = makeReceipt(sale);
+  window.print();
+}
+
+/* ==========================================
+   SALES HISTORY
+========================================== */
+
+function drawHistory() {
+  const sales = getSales().slice().reverse().slice(0, 30);
+
+  $('history').innerHTML = sales.length
+    ? sales.map(sale => `
+      <div class="history-row">
+        <div>
+          <strong>${esc(sale.number)} · ${money(sale.total)}</strong>
+          <div class="muted">
+            ${esc(sale.date)} · ${esc(sale.customer || 'Walk-in customer')}
+          </div>
+        </div>
+        <button data-reprint="${esc(sale.number)}">Print receipt</button>
+      </div>
+    `).join('')
+    : '<p class="hint">No completed sales yet.</p>';
+}
+
+/* ==========================================
+   POS BUTTONS
+========================================== */
+
+$('products').addEventListener('click', event => {
+  const button = event.target.closest('[data-add]');
+  if (!button) return;
+
+  const item = cart.find(i => i.id === button.dataset.add);
+
+  if (item) {
+    item.qty++;
+  } else {
+    cart.push({id:button.dataset.add, qty:1});
+  }
+
+  drawBill();
+});
+
+$('search').addEventListener('input', drawProducts);
+$('received').addEventListener('input', updateBalance);
+$('payment').addEventListener('change', updateBalance);
+
+$('bill').addEventListener('click', event => {
+  const step = event.target.closest('[data-step]');
+  const remove = event.target.closest('[data-remove]');
+
+  if (step) {
+    const item = cart.find(i => i.id === step.dataset.id);
+    item.qty += Number(step.dataset.step);
+
+    if (item.qty < 1) {
+      cart = cart.filter(i => i.id !== step.dataset.id);
+    }
+
+    drawBill();
+  }
+
+  if (remove) {
+    cart = cart.filter(i => i.id !== remove.dataset.remove);
+    drawBill();
+  }
+});
+
+$('clear').addEventListener('click', () => {
+  if (cart.length && !confirm('Clear the current bill?')) return;
+
+  cart = [];
+  $('customer').value = '';
+  $('phone').value = '';
+  $('received').value = '0';
+  $('payment').value = 'Cash';
+
+  drawBill();
+});
+
+/* ==========================================
+   COMPLETE SALE
+========================================== */
+
+$('complete').addEventListener('click', () => {
+  if (!cart.length) {
+    alert('Please add products to the bill first.');
+    return;
+  }
+
+  const due = total();
+  const received = Math.max(0, Number($('received').value) || 0);
+  const payment = $('payment').value;
+
+  if (payment !== 'Credit / Unpaid' && received < due) {
+    if (!confirm(
+      'The amount received is less than the total. Record this sale anyway?'
+    )) return;
+  }
+
+  const now = new Date();
+
+  const sale = {
+    number: 'ESS-' + now.getFullYear()
+      + String(now.getMonth() + 1).padStart(2, '0')
+      + String(now.getDate()).padStart(2, '0')
+      + '-' + String(now.getTime()).slice(-6),
+
+    date: now.toLocaleString('en-GH'),
+    customer: $('customer').value.trim(),
+    phone: $('phone').value.trim(),
+    payment,
+    received: payment === 'Credit / Unpaid' ? 0 : received,
+    total: due,
+
+    items: cart.map(item => ({
+      ...products.find(p => p.id === item.id),
+      qty: item.qty
+    }))
+  };
+
+  try {
+    const sales = getSales();
+    sales.push(sale);
+    putSales(sales);
+  } catch (error) {
+    alert('Could not save this sale. Please record it manually.');
+    return;
+  }
+
+  drawHistory();
+  printSale(sale);
+
+  cart = [];
+  $('customer').value = '';
+  $('phone').value = '';
+  $('received').value = '0';
+  $('payment').value = 'Cash';
+
+  drawBill();
+});
+
+/* ==========================================
+   REPRINT RECEIPT
+========================================== */
+
+$('history').addEventListener('click', event => {
+  const button = event.target.closest('[data-reprint]');
+  if (!button) return;
+
+  const sale = getSales().find(s => s.number === button.dataset.reprint);
+  if (sale) printSale(sale);
+});
+
+/* ==========================================
+   EXPORT SALES TO CSV
+========================================== */
+
+$('export').addEventListener('click', () => {
+  const sales = getSales();
+
+  if (!sales.length) {
+    alert('No sales to export yet.');
+    return;
+  }
+
+  const rows = [
+    ['Receipt No','Date','Customer','Phone','Payment',
+     'Total','Amount Received','Items'],
+
+    ...sales.map(sale => [
+      sale.number,
+      sale.date,
+      sale.customer,
+      sale.phone,
+      sale.payment,
+      sale.total,
+      sale.received,
+      sale.items.map(item => `${item.name} x${item.qty}`).join('; ')
+    ])
+  ];
+
+  const csv = rows.map(row =>
+    row.map(value =>
+      '"' + String(value ?? '').replace(/"/g, '""') + '"'
+    ).join(',')
+  ).join('\r\n');
+
+  const url = URL.createObjectURL(
+    new Blob([csv], {type:'text/csv;charset=utf-8;'})
+  );
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'essmass-walk-in-sales.csv';
+  link.click();
+
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
+/* Initial display */
+drawProducts();
+drawBill();
+drawHistory();
+</script>
+
+</body>
+</html>
