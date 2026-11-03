@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Shop everyday provisions at retail and wholesale prices with convenient delivery.">
+    <title>Provision Hub | Retail & Wholesale</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <div class="announcement">
+        Your everyday provisions, delivered to your door.
+    </div>
+
+    <header class="site-header">
+        <a href="index.html" class="logo">
+            <span class="logo-icon">P</span>
+            <span>Provision<span class="logo-highlight">Hub</span>
+                <small>RETAIL • WHOLESALE</small>
+            </span>
+        </a>
+
+        <form class="search-box" id="searchForm">
+            <input type="search" id="searchInput"
+                   placeholder="Search rice, milk, oil..."
+                   aria-label="Search products">
+            <button type="submit" aria-label="Search">⌕</button>
+        </form>
+
+        <button class="cart-button" id="cartButton">
+            🛒 Cart <span id="cartCount">0</span>
+        </button>
+    </header>
+
+    <nav class="main-nav">
+        <a href="#home">Home</a>
+        <a href="#categories">Categories</a>
+        <a href="#shop">Shop Provisions</a>
+        <a href="#wholesale">Wholesale Deals</a>
+        <a href="#delivery">Delivery</a>
+    </nav>
+
+    <main>
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <span class="eyebrow">YOUR EVERYDAY PROVISION STORE</span>
+                <h1>Stock up on what you need. <span>Save more.</span></h1>
+                <p>
+                    From a single item for your home to bulk supplies for
+                    your shop, find everyday essentials at great prices.
+                </p>
+                <div class="hero-actions">
+                    <a href="#shop" class="btn btn-primary">Shop Now</a>
+                    <a href="#wholesale" class="btn btn-outline">Explore Wholesale</a>
+                </div>
+                <div class="hero-benefits">
+                    <span>✓ Retail & bulk prices</span>
+                    <span>✓ Convenient delivery</span>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img
+                    src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1000&q=85"
+                    alt="Fresh groceries and provisions in a store">
+                <div class="floating-note">
+                    <span>🛍️</span>
+                    <div><strong>Shop your way</strong><small>Small or bulk orders</small></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="benefit-strip" id="delivery">
+            <div><span>🚚</span><strong>Home & Shop Delivery</strong><small>Delivery details at checkout</small></div>
+            <div><span>📦</span><strong>Wholesale Savings</strong><small>Buy more, pay less</small></div>
+            <div><span>🛒</span><strong>Easy Ordering</strong><small>Shop at your convenience</small></div>
+        </section>
+
+        <section class="section" id="categories">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">FIND WHAT YOU NEED</span>
+                    <h2>Shop by Category</h2>
+                </div>
+            </div>
+            <div class="category-grid" id="categoryGrid"></div>
+        </section>
+
+        <section class="wholesale-banner" id="wholesale">
+            <div>
+                <span class="eyebrow">FOR RETAILERS & BULK BUYERS</span>
+                <h2>Buying in bulk?</h2>
+                <p>Choose qualifying quantities to unlock wholesale prices on selected products.</p>
+                <a href="#shop" class="btn btn-light">Shop Wholesale Deals</a>
+            </div>
+            <div class="bulk-icon">📦</div>
+        </section>
+
+        <section class="section" id="shop">
+            <div class="section-heading shop-heading">
+                <div>
+                    <span class="eyebrow">EVERYDAY ESSENTIALS</span>
+                    <h2>Our Provisions</h2>
+                    <p class="muted">Choose your products and quantities below.</p>
+                </div>
+                <label class="filter-label">
+                    <span>Category</span>
+                    <select id="categoryFilter">
+                        <option value="All">All products</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="price-guide">
+                <span><i class="retail-dot"></i> Retail price</span>
+                <span><i class="wholesale-dot"></i> Wholesale price applies at the stated minimum quantity</span>
+            </div>
+
+            <div class="product-grid" id="productGrid"></div>
+            <p class="empty-message" id="emptyMessage" hidden>No products found. Try another search.</p>
+        </section>
+
+        <section class="delivery-note">
+            <span>🚚</span>
+            <div>
+                <h3>Need provisions delivered?</h3>
+                <p>Add your products to the cart and provide your delivery location at checkout.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <a href="#home" class="footer-logo">ProvisionHub</a>
+        <p>Your everyday provisions, retail and wholesale.</p>
+        <p class="copyright">© <span id="year"></span> ProvisionHub. All rights reserved.</p>
+    </footer>
+
+    <div class="overlay" id="overlay"></div>
+
+    <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping cart">
+        <div class="drawer-header">
+            <div><span class="eyebrow">YOUR ORDER</span><h2>Shopping Cart</h2></div>
+            <button class="close-button" id="closeCart" aria-label="Close cart">×</button>
+        </div>
+
+        <div class="cart-items" id="cartItems"></div>
+
+        <div class="cart-bottom">
+            <div class="cart-total">
+                <span>Subtotal</span>
+                <strong id="cartSubtotal">GH₵0.00</strong>
+            </div>
+            <p class="muted small">Delivery fees are confirmed separately.</p>
+            <button class="btn btn-primary full-width" id="checkoutButton">Proceed to Checkout</button>
+        </div>
+    </aside>
+
+    <section class="checkout-modal" id="checkoutModal" role="dialog"
+             aria-modal="true" aria-labelledby="checkoutTitle" hidden>
+        <div class="drawer-header">
+            <div><span class="eyebrow">ALMOST THERE</span><h2 id="checkoutTitle">Delivery Details</h2></div>
+            <button class="close-button" id="closeCheckout" aria-label="Close checkout">×</button>
+        </div>
+
+        <form id="checkoutForm">
+            <label>Full name
+                <input name="customerName" required autocomplete="name" placeholder="Enter your name">
+            </label>
+            <label>Phone number
+                <input name="phone" required type="tel" autocomplete="tel" placeholder="e.g. 024 123 4567">
+            </label>
+            <label>Delivery location / address
+                <textarea name="address" required rows="3" autocomplete="street-address"
+                          placeholder="Town, area, street and directions"></textarea>
+            </label>
+            <label>Order type
+                <select name="orderType" required>
+                    <option value="Retail">Retail</option>
+                    <option value="Wholesale">Wholesale</option>
+                    <option value="Mixed">Mixed retail and wholesale</option>
+                </select>
+            </label>
+            <label>Additional instructions (optional)
+                <textarea name="notes" rows="2" placeholder="Landmark or delivery instructions"></textarea>
+            </label>
+            <div class="checkout-total">
+                <span>Product subtotal</span>
+                <strong id="checkoutSubtotal">GH₵0.00</strong>
+            </div>
+            <p class="muted small">This prototype does not collect online payments. Your order will be prepared for WhatsApp submission.</p>
+            <button class="btn btn-primary full-width" type="submit">Send Order on WhatsApp</button>
+        </form>
+    </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+</body>
+</html>
